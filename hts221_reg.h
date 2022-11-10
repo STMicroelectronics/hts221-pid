@@ -50,7 +50,7 @@ extern "C" {
 /** if _BYTE_ORDER is not defined, choose the endianness of your architecture
   * by uncommenting the define which fits your platform endianness
   */
-//#define DRV_BYTE_ORDER    DRV_BIG_ENDIAN
+/* #define DRV_BYTE_ORDER    DRV_BIG_ENDIAN */
 #define DRV_BYTE_ORDER    DRV_LITTLE_ENDIAN
 
 #else /* defined __BYTE_ORDER__ */
@@ -331,11 +331,11 @@ typedef union
  * them with a custom implementation.
  */
 int32_t hts221_read_reg(stmdev_ctx_t *ctx, uint8_t reg,
-                               uint8_t *data,
-                               uint16_t len);
+                        uint8_t *data,
+                        uint16_t len);
 int32_t hts221_write_reg(stmdev_ctx_t *ctx, uint8_t reg,
-                                uint8_t *data,
-                                uint16_t len);
+                         uint8_t *data,
+                         uint16_t len);
 
 typedef enum
 {
