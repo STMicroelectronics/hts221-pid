@@ -330,10 +330,10 @@ typedef union
  * The __weak directive allows the final application to overwrite
  * them with a custom implementation.
  */
-int32_t __weak hts221_read_reg(stmdev_ctx_t *ctx, uint8_t reg,
+int32_t hts221_read_reg(stmdev_ctx_t *ctx, uint8_t reg,
                                uint8_t *data,
                                uint16_t len);
-int32_t __weak hts221_write_reg(stmdev_ctx_t *ctx, uint8_t reg,
+int32_t hts221_write_reg(stmdev_ctx_t *ctx, uint8_t reg,
                                 uint8_t *data,
                                 uint16_t len);
 
