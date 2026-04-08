@@ -114,7 +114,7 @@ int32_t hts221_humidity_avg_set(const stmdev_ctx_t *ctx, hts221_avgh_t val)
 
   if (ret == 0)
   {
-    reg.avgh = (uint8_t)val;
+    reg.avgh = (uint8_t)val & 0x07U;
     ret = hts221_write_reg(ctx, HTS221_AV_CONF, (uint8_t *) &reg, 1);
   }
 
@@ -198,7 +198,7 @@ int32_t hts221_temperature_avg_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    reg.avgt = (uint8_t)val;
+    reg.avgt = (uint8_t)val & 0x07U;
     ret = hts221_write_reg(ctx, HTS221_AV_CONF, (uint8_t *) &reg, 1);
   }
 
@@ -282,7 +282,7 @@ int32_t hts221_data_rate_set(const stmdev_ctx_t *ctx, hts221_odr_t val)
 
   if (ret == 0)
   {
-    reg.odr = (uint8_t)val;
+    reg.odr = (uint8_t)val & 0x03U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG1, (uint8_t *) &reg, 1);
   }
 
@@ -349,7 +349,7 @@ int32_t hts221_block_data_update_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    reg.bdu = val;
+    reg.bdu = val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG1, (uint8_t *) &reg, 1);
   }
 
@@ -395,7 +395,7 @@ int32_t hts221_one_shoot_trigger_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    reg.one_shot = val;
+    reg.one_shot = val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG2, (uint8_t *) &reg, 1);
   }
 
@@ -484,8 +484,7 @@ int32_t hts221_humidity_raw_get(const stmdev_ctx_t *ctx, int16_t *val)
   ret = hts221_read_reg(ctx, HTS221_HUMIDITY_OUT_L, buff, 2);
   if (ret == 0)
   {
-    *val = (int16_t)buff[1];
-    *val = (*val * 256) + (int16_t)buff[0];
+    *val = (int16_t)(buff[0] | ((uint16_t)buff[1] << 8));
   }
 
   return ret;
@@ -507,8 +506,7 @@ int32_t hts221_temperature_raw_get(const stmdev_ctx_t *ctx, int16_t *val)
   ret = hts221_read_reg(ctx, HTS221_TEMP_OUT_L, buff, 2);
   if (ret == 0)
   {
-    *val = (int16_t)buff[1];
-    *val = (*val * 256) + (int16_t)buff[0];
+    *val = (int16_t)(buff[0] | ((uint16_t)buff[1] << 8));
   }
 
   return ret;
@@ -560,7 +558,7 @@ int32_t hts221_power_on_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    reg.pd = val;
+    reg.pd = val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG1, (uint8_t *) &reg, 1);
   }
 
@@ -606,7 +604,7 @@ int32_t hts221_heater_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    reg.heater = val;
+    reg.heater = val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG2, (uint8_t *) &reg, 1);
   }
 
@@ -652,7 +650,7 @@ int32_t hts221_boot_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    reg.boot = val;
+    reg.boot = val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG2, (uint8_t *) &reg, 1);
   }
 
@@ -727,7 +725,7 @@ int32_t hts221_drdy_on_int_set(const stmdev_ctx_t *ctx, uint8_t val)
 
   if (ret == 0)
   {
-    reg.drdy = val;
+    reg.drdy = val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG3, (uint8_t *) &reg, 1);
   }
 
@@ -772,7 +770,7 @@ int32_t hts221_pin_mode_set(const stmdev_ctx_t *ctx, hts221_pp_od_t val)
 
   if (ret == 0)
   {
-    reg.pp_od = (uint8_t)val;
+    reg.pp_od = (uint8_t)val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG3, (uint8_t *) &reg, 1);
   }
 
@@ -832,7 +830,7 @@ int32_t hts221_int_polarity_set(const stmdev_ctx_t *ctx,
 
   if (ret == 0)
   {
-    reg.drdy_h_l = (uint8_t)val;
+    reg.drdy_h_l = (uint8_t)val & 0x01U;
     ret = hts221_write_reg(ctx, HTS221_CTRL_REG3, (uint8_t *) &reg, 1);
   }
 
@@ -1007,7 +1005,7 @@ int32_t hts221_hum_adc_point_0_get(const stmdev_ctx_t *ctx, float_t *val)
   int32_t ret;
 
   ret = hts221_read_reg(ctx, HTS221_H0_T0_OUT_L, coeff_p, 2);
-  coeff = ((int16_t)coeff_p[1] * 256) + (int16_t)coeff_p[0];
+  coeff = (int16_t)(coeff_p[0] | (uint16_t)coeff_p[1] << 8);
   if (ret == 0)
   {
     *val = (float_t)coeff * 1.0f;
@@ -1031,7 +1029,7 @@ int32_t hts221_hum_adc_point_1_get(const stmdev_ctx_t *ctx, float_t *val)
   int32_t ret;
 
   ret = hts221_read_reg(ctx, HTS221_H1_T0_OUT_L, coeff_p, 2);
-  coeff = ((int16_t)coeff_p[1] * 256) + (int16_t)coeff_p[0];
+  coeff = (int16_t)(coeff_p[0] | (uint16_t)coeff_p[1] << 8);
   if (ret == 0)
   {
     *val = (float_t)coeff * 1.0f;
@@ -1055,7 +1053,7 @@ int32_t hts221_temp_adc_point_0_get(const stmdev_ctx_t *ctx, float_t *val)
   int32_t ret;
 
   ret = hts221_read_reg(ctx, HTS221_T0_OUT_L, coeff_p, 2);
-  coeff = ((int16_t)coeff_p[1] * 256) + (int16_t)coeff_p[0];
+  coeff = (int16_t)(coeff_p[0] | (uint16_t)coeff_p[1] << 8);
   if (ret == 0)
   {
     *val = (float_t)coeff * 1.0f;
@@ -1079,7 +1077,7 @@ int32_t hts221_temp_adc_point_1_get(const stmdev_ctx_t *ctx, float_t *val)
   int32_t ret;
 
   ret = hts221_read_reg(ctx, HTS221_T1_OUT_L, coeff_p, 2);
-  coeff = ((int16_t)coeff_p[1] * 256) + (int16_t)coeff_p[0];
+  coeff = (int16_t)(coeff_p[0] | (uint16_t)coeff_p[1] << 8);
   if (ret == 0)
   {
     *val = (float_t)coeff * 1.0f;
